@@ -53,10 +53,10 @@ class Attendance(Resource):
       # compress files
       zip_buffer = io.BytesIO()
       with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
-        for file_name, data in [('考勤数据表.csv', utils.covert_to_timesheet(persons).encode()), ('打卡记录表.csv', utils.covert_to_clockrecord(persons).encode())]:
+        for file_name, data in [('考勤数据表.csv', utils.covert_to_timesheet(persons).encode('gb18030')), ('打卡记录表.csv', utils.covert_to_clockrecord(persons).encode('gb18030'))]:
           zip_file.writestr(file_name, data)
       zip_buffer.seek(0)
-      return send_file(zip_buffer, as_attachment=True, attachment_filename='数据.zip', mimetype="application/zip")
+      return send_file(zip_buffer, as_attachment=True, attachment_filename='data.zip', mimetype="application/zip")
     except Exception as e:
       traceback.print_exc()
       return f"Error: {e}", 400
