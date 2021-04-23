@@ -109,7 +109,7 @@ class person:
 
       # 随机加班费大于预计值, 则回归计算
       if self.overtime_salary < self.weekend_overtime_salary + self.workday_overtime_salary:
-        self.calculate_data()
+        return False
       # 得出其他费用进行填补, 其他费用建议不大于2500
       self.other_salary = self.overtime_salary - self.weekend_overtime_salary - self.workday_overtime_salary
       if self.other_salary >= self.real_salary * CS.MAX_OTHER_SALARY_MULTIPLIER:  # 其他类别工资建议不大于实际收入的一半

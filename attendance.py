@@ -42,8 +42,8 @@ class Attendance(Resource):
       zip_buffer = io.BytesIO()
       with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
         for file_name, data in [
-          ('考勤数据表.csv', utils.covert_to_timesheet(persons).encode('utf-8')),
-          ('打卡记录表.csv', utils.covert_to_clockrecord(persons).encode('utf-8'))
+          ('考勤数据表.csv', utils.covert_to_timesheet(persons).encode('utf-16')),
+          ('打卡记录表.csv', utils.covert_to_clockrecord(persons).encode('utf-16'))
         ]:
           zip_file.writestr(file_name, data)
       zip_buffer.seek(0)

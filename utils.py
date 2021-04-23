@@ -61,7 +61,7 @@ def random_start_end_time(during=CS.DAILY_WORKING_HOURS):
 
 def covert_to_timesheet(people):
   output = io.StringIO()
-  writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+  writer = csv.writer(output, dialect='excel-tab', quoting=csv.QUOTE_NONNUMERIC)
   writer.writerow(TIMESHEET_CSV_HEADER)
   for p in people:
     writer.writerow(p.to_timesheet_row())
@@ -69,7 +69,7 @@ def covert_to_timesheet(people):
 
 def covert_to_clockrecord(people):
   output = io.StringIO()
-  writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+  writer = csv.writer(output, dialect='excel-tab', quoting=csv.QUOTE_NONNUMERIC)
   for p in people:
     for row in p.to_clockrecord_rows():
       writer.writerow(row)
