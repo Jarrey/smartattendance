@@ -19,9 +19,23 @@ class person:
     self.workday_count = self.weekend_count = self.month_workday_count = 0
     self.workdays = []
     self.weekends = []
-    self.reset()
+    self.__reset()
 
-  def reset(self):
+  def set_date_range(self, from_date, to_date):
+    if not isinstance(from_date, date) or not isinstance(to_date, date):
+      raise TypeError("Only datetime.date type is allowed.")
+    if from_date.year != to_date.year or from_date.month != to_date.month:
+      raise Exception("The date range should be in the same month.")
+    self.from_date = from_date
+    self.to_date = to_date
+    self.workday_count, self.workdays = utils.get_workdays(self.from_date, self.to_date)
+    self.weekend_count, self.weekends = utils.get_weekends(self.from_date, self.to_date)
+
+    # get first and last day of this month
+    frist_day, last_day = utils.get_month_day_range(from_date)
+    self.month_workday_count, _ = utils.get_workdays(frist_day, last_day)
+
+  def __reset(self):
     self.is_full_time = False
     self.has_vacation = False
     self.has_overtime = False
@@ -40,20 +54,6 @@ class person:
     self.weekend_overtime_sheet = {}
     self.clock_records = {}
 
-  def set_date_range(self, from_date, to_date):
-    if not isinstance(from_date, date) or not isinstance(to_date, date):
-      raise TypeError("Only datetime.date type is allowed.")
-    if from_date.year != to_date.year or from_date.month != to_date.month:
-      raise Exception("The date range should be in the same month.")
-    self.from_date = from_date
-    self.to_date = to_date
-    self.workday_count, self.workdays = utils.get_workdays(self.from_date, self.to_date)
-    self.weekend_count, self.weekends = utils.get_weekends(self.from_date, self.to_date)
-
-    # get first and last day of this month
-    frist_day, last_day = utils.get_month_day_range(from_date)
-    self.month_workday_count, _ = utils.get_workdays(frist_day, last_day)
-
   def __avg_salary_hourly(self):
     return round(self.base_salary / self.month_workday_count / CS.DAILY_WORKING_HOURS)
 
@@ -63,14 +63,14 @@ class person:
   def __avg_salary_daily(self):
     return self.__avg_salary_hourly() * CS.DAILY_WORKING_HOURS
 
-  def calculate_data(self):
-    self.reset()
+  def __calculate_data(self):
+    self.__reset()
     # get the basic information including if overtime and full time working in month
-    self.calculate_personal_properties()
-    self.calculate_salaries()
-    return self.calculate_overtime()
+    self.__calculate_personal_properties()
+    self.__calculate_salaries()
+    return self.__calculate_overtime()
 
-  def calculate_personal_properties(self):
+  def __calculate_personal_properties(self):
     if self.real_salary - CS.FULL_TIME_BONUS > self.base_total:
       self.is_full_time = random.choice([True] * 5 + [False])
       self.has_overtime = True
@@ -89,13 +89,13 @@ class person:
       self.has_vacation = True
     self.has_weekend_overtime = random.choice([False] * 5 + [True]) if self.has_overtime else False
 
-  def calculate_salaries(self):
+  def __calculate_salaries(self):
     self.fule_time_bonus = CS.FULL_TIME_BONUS * (1 if self.is_full_time else 0)
     self.vacation_hours = random.randint(1, 15) * CS.DAILY_WORKING_HOURS * (1 if self.has_vacation else 0)
     self.vacation_salary = self.vacation_hours * self.__avg_salary_hourly_with_sub() * -1
     self.overtime_salary = (self.real_salary - self.base_total - self.vacation_salary - (CS.FULL_TIME_BONUS if self.is_full_time else 0)) * (1 if self.has_overtime else 0)
 
-  def calculate_overtime(self):
+  def __calculate_overtime(self):
     if self.has_overtime and self.overtime_salary > 0:
       # 随机计算得出周末加班时间, 以 0.5 天为单位计
       self.weekend_overtime = \
@@ -116,6 +116,11 @@ class person:
         return False
       self.overtime_salary = self.weekend_overtime_salary + self.workday_overtime_salary
       return True
+
+  def calculate(self):
+    has_result = self.__calculate_data()
+    while not has_result:
+      has_result = self.__calculate_data()
 
   # 基于加班请假时间值生成考勤表
   def generate_timesheet(self):

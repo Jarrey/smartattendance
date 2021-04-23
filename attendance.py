@@ -33,9 +33,7 @@ class Attendance(Resource):
       persons = []
       for name, person in people.items():
         person.set_date_range(from_date, to_date)
-        has_result = person.calculate_data()
-        while not has_result:
-          has_result = person.calculate_data()
+        person.calculate()
         person.generate_timesheet()
         person.generate_clock_record()
         persons.append(person)
