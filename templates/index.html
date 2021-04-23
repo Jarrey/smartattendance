@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自动考勤生成工具</title>
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-datepicker3.min.css') }}" rel="stylesheet">
+    <style>
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      background: linear-gradient(#F1F1F1 50%, #F9F9F9 50%) top left / 100% 36px;
+      border: 1px solid #CCC;
+      box-sizing: border-box;
+      padding: 0 0 0 5px;
+      resize: vertical;
+      line-height: 18px;
+      font-size: 15px;
+    }
+    </style>
+</head>
+<body>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.zh-CN.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/core.js') }}"></script>
+
+<h3 class="mx-5">自动考勤生成工具</h3>
+  <div class="mx-5 my-1" id="main_form">
+      <label for="date_range">确认生成报表的时间范围(默认为当月)，建议选择一个整月日期:</label>
+      <div class="input-daterange input-group mb-2" id="date_range">
+        <input type="text" class="input-sm form-control" id="from_date"/>
+        <span class="input-group-addon mx-2">到</span>
+        <input type="text" class="input-sm form-control" id="to_date"/>
+      </div>
+      <button type="button" class="btn btn-primary mb-2" onclick="window.open('m_date','_blank')">维护法定节假日及调休日...</button>
+      <br />
+    <label for="data_area">确认修改基本工资信息，岗位工资信息和实际工资信息:</label>
+      <p class="text-danger">* 以下文本格式: 姓名, 基本工资, 岗位津贴, 实际工资</p>
+      <p class="text-danger">* 可用分隔符: 逗号(,) 制表符(Tab 键)</p>
+    <textarea class="my-1" id="data_area" rows="20"></textarea>
+    <button type="button" class="btn btn-success mb-2" onclick="submit()">提交并生成考勤记录...</button>
+  </div>
+
+</body>
+</html>

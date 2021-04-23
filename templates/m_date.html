@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>维护法定节假日及调休日</title>
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <style>
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      background: linear-gradient(#F1F1F1 50%, #F9F9F9 50%) top left / 100% 36px;
+      border: 1px solid #CCC;
+      box-sizing: border-box;
+      padding: 0 0 0 5px;
+      resize: vertical;
+      line-height: 18px;
+      font-size: 15px;
+    }
+    </style>
+</head>
+<body>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/m_date.js') }}"></script>
+
+<div class="mx-5 my-1 container" id="main_form">
+    <div class="row">
+    <div class="col">
+      <label for="holiday_area">法定节假日:</label>
+      <textarea class="my-1" id="holiday_area" rows="25"></textarea>
+      <button type="button" class="btn btn-success mb-2" onclick="save_day('holiday')">保存法定节假日</button>
+    </div>
+    <div class="col">
+      <label for="shiftday_area">法定调休日:</label>
+      <textarea class="my-1" id="shiftday_area" rows="25"></textarea>
+      <button type="button" class="btn btn-success mb-2" onclick="save_day('shiftday')">保存法定调休日</button>
+    </div>
+    </div>
+</div>
+</body>
+</html>

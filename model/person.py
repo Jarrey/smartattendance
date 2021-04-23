@@ -8,17 +8,17 @@ import utils
 TIMESHEET_CSV_HEADER = ["姓名", "基本工资", "岗位工资", "工资", "出勤天数", "请假小时", "请假扣款", "平日加班小时", "平日加班费", "周末加班小时", "周末加班费", "其他", "考核", "满勤", "工资总额"]
 
 class person:
-  def __init__(self, name, base_salary, subsidies):
+  def __init__(self, name, base_salary, subsidies, real_salary):
     self.name = name
-    self.base_salary = int(base_salary)
-    self.subsidies = int(subsidies)
+    self.base_salary = float(base_salary)
+    self.subsidies = float(subsidies)
+    self.real_salary = float(real_salary)
     self.base_total = self.base_salary + self.subsidies
     self.from_date = None
     self.to_date = None
     self.workday_count = self.weekend_count = self.month_workday_count = 0
     self.workdays = []
     self.weekends = []
-    self.real_salary = 0
     self.reset()
 
   def reset(self):
@@ -39,10 +39,6 @@ class person:
     self.workday_overtime_sheet = {}
     self.weekend_overtime_sheet = {}
     self.clock_records = {}
-
-  def set_real_salary(self, real_salary):
-    self.real_salary = real_salary
-    self.calculate_data()
 
   def set_date_range(self, from_date, to_date):
     if not isinstance(from_date, date) or not isinstance(to_date, date):
@@ -72,7 +68,7 @@ class person:
     # get the basic information including if overtime and full time working in month
     self.calculate_personal_properties()
     self.calculate_salaries()
-    self.calculate_overtime()
+    return self.calculate_overtime()
 
   def calculate_personal_properties(self):
     if self.real_salary - CS.FULL_TIME_BONUS > self.base_total:
@@ -116,9 +112,10 @@ class person:
         self.calculate_data()
       # 得出其他费用进行填补, 其他费用建议不大于2500
       self.other_salary = self.overtime_salary - self.weekend_overtime_salary - self.workday_overtime_salary
-      if self.other_salary >= self.real_salary * 0.5: # 其他类别工资建议不大于实际收入的一半
-        self.calculate_data()
+      if self.other_salary >= self.real_salary * CS.MAX_OTHER_SALARY_MULTIPLIER:  # 其他类别工资建议不大于实际收入的一半
+        return False
       self.overtime_salary = self.weekend_overtime_salary + self.workday_overtime_salary
+      return True
 
   # 基于加班请假时间值生成考勤表
   def generate_timesheet(self):

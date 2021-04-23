@@ -10,9 +10,11 @@ from model.person import person, TIMESHEET_CSV_HEADER
 def read_base_information():
   people = {}
   with open('data/base.data', 'r') as f:
-    base_data = csv.reader(f, delimiter=',', quoting=csv.QUOTE_NONE)
+    dialect = csv.Sniffer().sniff(f.read(1024))
+    f.seek(0)
+    base_data = csv.reader(f, dialect)
     for data in base_data:
-      people[data[0]] = person(data[0], data[1], data[2])
+      people[data[0]] = person(data[0].strip(), data[1].strip(), data[2].strip(), data[3].strip())
 
   return people
 

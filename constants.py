@@ -32,3 +32,4 @@ FULL_TIME_BONUS = 200              # 全勤奖金
 MAX_CONTINUE_WORKING_DAYS = 20     # 最大连续工作天数
 MAX_MONTHLY_OVERTIME_HOURS = 30    # 月最大加班时数, 规则是 36 小时, 实际不超过 30 小时计
 MAX_DAILY_OVERTIME_HOURS = 3       # 日最大加班时数
+MAX_OTHER_SALARY_MULTIPLIER = 0.6  # 其他工资最高所占总收入比例阈值系数
