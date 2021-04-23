@@ -24,7 +24,7 @@ class Attendance(Resource):
       body = json.loads(request.data)
       from_date = datetime.strptime(body["from_date"], '%Y%m%d').date()
       to_date = datetime.strptime(body["to_date"], '%Y%m%d').date()
-      data = body["data"]
+      data = body["data"].strip()
       with open('data/base.data', 'w') as f:
         f.write(data)
 
@@ -76,10 +76,10 @@ class Date(Resource):
       day_type = body["type"]
       if day_type == "holiday":
         with open('data/holiday.data', 'w') as f:
-          f.write(body["data"])
+          f.write(body["data"].strip())
       else:
         with open('data/shiftday.data', 'w') as f:
-          f.write(body["data"])
+          f.write(body["data"].strip())
         print(day_type)
       return "OK"
     except Exception as e:
