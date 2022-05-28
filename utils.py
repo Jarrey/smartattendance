@@ -4,7 +4,7 @@ import io
 import random
 from datetime import timedelta
 import constants as CS
-from model.person import person, TIMESHEET_CSV_HEADER
+from model.person import person, TIMESHEET_CSV_HEADER, CLOCK_RECORD_CSV_HEADER
 
 # get all base salary information
 def read_base_information():
@@ -14,7 +14,7 @@ def read_base_information():
     f.seek(0)
     base_data = csv.reader(f, dialect)
     for data in base_data:
-      people[data[0]] = person(data[0].strip(), data[1].strip(), data[2].strip(), data[3].strip())
+      people[data[0]] = person(data[0].strip(), data[1].strip(), data[2].strip())
 
   return people
 
@@ -49,15 +49,19 @@ def get_month_day_range(date):
 
 def random_start_end_time(during=CS.DAILY_WORKING_HOURS):
   if during > 0:
-    if during == CS.HALFDAY_WORKING_HOURS:
-      start_time = random.choice(CS.DAY_START_TIMES + [CS.DAY_LUNCH_END_TIME]) + timedelta(minutes=(random.choice([1, -1]) * random.randint(0, CS.TOL_RECORD_TIME)), seconds=random.randint(0, 59))
-      end_time = start_time + timedelta(hours=during) + timedelta(minutes=(random.choice([1, -1]) * random.randint(0, CS.TOL_RECORD_TIME)), seconds=random.randint(0, 59))
+    am_start_time = random.choice(CS.DAY_START_OPTION_TIMES) + timedelta(minutes=(random.choice([1, -1]) * random.randint(0, CS.TOL_RECORD_TIME)), seconds=random.randint(0, 59))
+    am_end_time = CS.DAY_LUNCH_START_TIME + timedelta(minutes=random.randint(0, CS.TOL_RECORD_TIME), seconds=random.randint(0, 59))
+    pm_start_time = CS.DAY_LUNCH_END_TIME + timedelta(minutes=(random.choice([1, -1]) * random.randint(0, CS.TOL_RECORD_TIME)), seconds=random.randint(0, 59))
+    if during > CS.DAILY_WORKING_HOURS:
+      pm_end_time = CS.DAY_OVERTIME_START_TIME + timedelta(hours=during - CS.DAILY_WORKING_HOURS) + timedelta(minutes=random.randint(0, CS.TOL_RECORD_TIME), seconds=random.randint(0, 59))
     else:
-      start_time = random.choice(CS.DAY_START_TIMES) + timedelta(minutes=(random.choice([1, -1]) * random.randint(0, CS.TOL_RECORD_TIME)), seconds=random.randint(0, 59))
-      end_time = start_time + timedelta(hours=during + CS.DAILY_LUNCH_HOURS) + timedelta(minutes=(random.choice([1, -1]) * random.randint(0, CS.TOL_RECORD_TIME)), seconds=random.randint(0, 59))
-    return start_time.time(), end_time.time()
+      pm_end_time = CS.DAY_START_TIME + timedelta(hours=during + CS.DAILY_LUNCH_HOURS) + timedelta(minutes=random.randint(0, CS.TOL_RECORD_TIME), seconds=random.randint(0, 59))
+    return am_start_time.time(), \
+           pm_end_time.time() if pm_end_time.time() < am_end_time.time() else am_end_time.time(), \
+           None if pm_end_time.time() < am_end_time.time() else pm_start_time.time(), \
+           None if pm_end_time.time() < am_end_time.time() else pm_end_time.time()
   else:
-    return None, None
+    return None, None, None, None
 
 def covert_to_timesheet(people):
   output = io.StringIO()
@@ -70,6 +74,7 @@ def covert_to_timesheet(people):
 def covert_to_clockrecord(people):
   output = io.StringIO()
   writer = csv.writer(output, dialect='excel-tab', quoting=csv.QUOTE_NONNUMERIC)
+  writer.writerow(CLOCK_RECORD_CSV_HEADER)
   for p in people:
     for row in p.to_clockrecord_rows():
       writer.writerow(row)

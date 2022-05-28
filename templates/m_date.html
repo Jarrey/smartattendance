@@ -25,14 +25,15 @@
 <script src="{{ url_for('static', filename='js/m_date.js') }}"></script>
 
 <div class="mx-5 my-1 container" id="main_form">
+    <label for="shiftday_area">输入日期格式: yyyymmdd; # 为注释符号</label>
     <div class="row">
     <div class="col">
-      <label for="holiday_area">法定节假日 (格式: yyyymmdd):</label>
+      <label for="holiday_area">法定节假日:</label>
       <textarea class="my-1" id="holiday_area" rows="25"></textarea>
       <button type="button" class="btn btn-success mb-2" onclick="save_day('holiday')">保存法定节假日</button>
     </div>
     <div class="col">
-      <label for="shiftday_area">法定调休日 (格式: yyyymmdd):</label>
+      <label for="shiftday_area">法定调休日:</label>
       <textarea class="my-1" id="shiftday_area" rows="25"></textarea>
       <button type="button" class="btn btn-success mb-2" onclick="save_day('shiftday')">保存法定调休日</button>
     </div>
